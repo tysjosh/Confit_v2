@@ -6,6 +6,21 @@ model_checkpoints
 wandb
 notebook
 
+# Project-specific
+*.fp32
+hard_negatives/
+dataset/resume_job_fit/
+dataset/my_hyre_output/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+.DS_Store
+
+# HuggingFace cache
+transformers_cache/
+huggingface/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
