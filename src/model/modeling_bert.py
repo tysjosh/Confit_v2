@@ -711,11 +711,10 @@ class JinaBertEncoder(nn.Module):
         )
         self.gradient_checkpointing = False
         self.num_attention_heads = config.num_attention_heads
-        self.register_buffer(
-            "alibi",
-            self.rebuild_alibi_tensor(size=config.max_position_embeddings),
-            persistent=False,
-        )
+        # Defer alibi tensor creation to avoid meta-device errors in newer transformers.
+        # It will be built on first forward() call on the correct device.
+        self._current_alibi_size = 0
+        self.alibi = None
 
     def rebuild_alibi_tensor(
         self, size: int, device: Optional[Union[torch.device, str]] = None
@@ -783,18 +782,11 @@ class JinaBertEncoder(nn.Module):
         
         # Add alibi matrix to extended_attention_mask
         _, seqlen, _ = hidden_states.size()
-        if self._current_alibi_size < seqlen:
-            # Rebuild the alibi tensor when needed
-            warnings.warn(
-                f'Increasing alibi size from {self._current_alibi_size} to {seqlen}.'
-            )
-            self.register_buffer(
-                "alibi",
-                self.rebuild_alibi_tensor(size=seqlen, device=hidden_states.device).to(
-                    hidden_states.dtype
-                ),
-                persistent=False,
-            )
+        if self.alibi is None or self._current_alibi_size < seqlen:
+            # Build or rebuild the alibi tensor when needed
+            self.alibi = self.rebuild_alibi_tensor(
+                size=seqlen, device=hidden_states.device
+            ).to(hidden_states.dtype)
         elif self.alibi.device != hidden_states.device:
             # Device catch-up
             self.alibi = self.alibi.to(hidden_states.device)
