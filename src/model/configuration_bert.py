@@ -128,6 +128,8 @@ class JinaBertConfig(PretrainedConfig):
         pad_token_id=0,
         position_embedding_type="absolute",
         is_decoder=False,
+        add_cross_attention=False,
+        chunk_size_feed_forward=0,
         use_cache=True,
         classifier_dropout=None,
         feed_forward_type="original",
@@ -151,6 +153,8 @@ class JinaBertConfig(PretrainedConfig):
         self.layer_norm_eps = layer_norm_eps
         self.position_embedding_type = position_embedding_type
         self.is_decoder = is_decoder
+        self.add_cross_attention = add_cross_attention
+        self.chunk_size_feed_forward = chunk_size_feed_forward
         self.use_cache = use_cache
         self.classifier_dropout = classifier_dropout
         self.feed_forward_type = feed_forward_type
