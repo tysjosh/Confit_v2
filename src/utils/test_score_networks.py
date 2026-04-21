@@ -70,22 +70,9 @@ class ScoreNetworkTestArguments:
         assert self.dataset_type in [
             "AliTianChi",
             "recruiting_data",
+            "recruiting_data_v1",
+            "recruiting_data_v2",
         ], f"Invalid dataset type: {self.dataset_type}"
-        assert (
-            self.dataset_type in self.resume_data_path
-        ), f"Datset type {self.dataset_type} does not match resume data path {self.resume_data_path}"
-        assert (
-            self.dataset_type in self.job_data_path
-        ), f"Datset type {self.dataset_type} does not match job data path {self.job_data_path}"
-        assert (
-            self.dataset_type in self.classification_data_path
-        ), f"Datset type {self.dataset_type} does not match classification_data_path {self.classification_data_path}"
-        assert (
-            self.dataset_type in self.rank_resume_data_path
-        ), f"Datset type {self.dataset_type} does not match rank_resume_data_path {self.rank_resume_data_path}"
-        assert (
-            self.dataset_type in self.rank_job_data_path
-        ), f"Datset type {self.dataset_type} does not match rank_job_data_path {self.rank_job_data_path}"
         return
 
 

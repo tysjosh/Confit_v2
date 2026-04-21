@@ -509,7 +509,7 @@ class PrecomputedMetric(Metric):
         Returns:
             float: precomputed score from the precomputed_scores dict using the key (resume_repersentation, job_representation)
         """
-        key = (resume_repersentation, job_representation)
+        key = (str(resume_repersentation), str(job_representation))
         return self.precomputed_scores[key]
 
     def batch_score(
