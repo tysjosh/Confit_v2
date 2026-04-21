@@ -11,6 +11,7 @@ notebook
 hard_negatives/
 dataset/resume_job_fit/
 dataset/my_hyre_output/
+data_splits_v7/
 *.safetensors
 *.bin
 *.pt
