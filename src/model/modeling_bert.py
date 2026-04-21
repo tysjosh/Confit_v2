@@ -984,6 +984,16 @@ class JinaBertPreTrainedModel(PreTrainedModel):
         if isinstance(module, JinaBertEncoder):
             module.gradient_checkpointing = value
 
+    def get_head_mask(self, head_mask, num_hidden_layers, is_attention_chunked=False):
+        """Prepare the head mask if needed (1.0 in mask = keep, 0.0 = prune)."""
+        if head_mask is not None:
+            head_mask = self._convert_head_mask_to_5d(head_mask, num_hidden_layers)
+            if is_attention_chunked:
+                head_mask = head_mask.unsqueeze(-1)
+        else:
+            head_mask = [None] * num_hidden_layers
+        return head_mask
+
 
 @dataclass
 class JinaBertForPreTrainingOutput(ModelOutput):
