@@ -994,6 +994,33 @@ class JinaBertPreTrainedModel(PreTrainedModel):
             head_mask = [None] * num_hidden_layers
         return head_mask
 
+    def get_extended_attention_mask(self, attention_mask, input_shape, device=None, dtype=None):
+        """Create a 3D/4D attention mask from a 2D mask."""
+        if attention_mask.dim() == 3:
+            extended_attention_mask = attention_mask[:, None, :, :]
+        elif attention_mask.dim() == 2:
+            extended_attention_mask = attention_mask[:, None, None, :]
+        else:
+            raise ValueError(f"Wrong shape for attention_mask (shape {attention_mask.shape})")
+        if dtype is None:
+            dtype = next(self.parameters()).dtype
+        extended_attention_mask = extended_attention_mask.to(dtype=dtype)
+        extended_attention_mask = (1.0 - extended_attention_mask) * torch.finfo(dtype).min
+        return extended_attention_mask
+
+    def invert_attention_mask(self, encoder_attention_mask):
+        """Invert an attention mask (e.g., switch 0. and 1.)."""
+        if encoder_attention_mask.dim() == 3:
+            encoder_extended_attention_mask = encoder_attention_mask[:, None, :, :]
+        elif encoder_attention_mask.dim() == 2:
+            encoder_extended_attention_mask = encoder_attention_mask[:, None, None, :]
+        else:
+            raise ValueError(f"Wrong shape for encoder_attention_mask (shape {encoder_attention_mask.shape})")
+        dtype = next(self.parameters()).dtype
+        encoder_extended_attention_mask = encoder_extended_attention_mask.to(dtype=dtype)
+        encoder_extended_attention_mask = (1.0 - encoder_extended_attention_mask) * torch.finfo(dtype).min
+        return encoder_extended_attention_mask
+
 
 @dataclass
 class JinaBertForPreTrainingOutput(ModelOutput):
